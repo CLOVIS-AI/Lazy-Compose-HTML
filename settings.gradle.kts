@@ -23,6 +23,8 @@ plugins {
 }
 
 include(
+	"lazy-layouts",
+
 	"demo",
 )
 
