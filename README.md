@@ -4,8 +4,7 @@ Lazy layouts for [Compose HTML](https://github.com/JetBrains/compose-multiplatfo
 
 ## License
 
-<!-- Mentions under which license you are publishing the project. -->
-<!-- Add the full text to the LICENSE file. -->
+This project is licensed under the [Apache 2.0 license](LICENSE).
 
 ## Contributing
 
