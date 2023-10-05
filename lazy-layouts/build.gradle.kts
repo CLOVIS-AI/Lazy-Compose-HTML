@@ -2,11 +2,22 @@ plugins {
 	id("conventions.base")
 	id("conventions.kotlin")
 	id("conventions.library")
+
+	alias(libs.plugins.compose)
 }
 
 kotlin {
 	js(IR) {
 		browser()
+	}
+
+	val jsMain by sourceSets.getting {
+		dependencies {
+			api(compose.runtime)
+			api(compose.html.core)
+
+			implementation(libs.kotlin.browser)
+		}
 	}
 }
 
