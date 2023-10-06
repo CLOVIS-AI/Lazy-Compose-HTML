@@ -1,15 +1,10 @@
-# Playground: Gradle
+# Lazy layouts for Compose HTML
 
-<!-- When using the Playground to bootstrap a project, replace this by your project description. -->
-This a template to easily bootstrap your projects.
-
-> This project is part of the OpenSavvy Playground.
-> To learn more, visit [this page](docs/playground/README.md).
+Lazy layouts for [Compose HTML](https://github.com/JetBrains/compose-multiplatform#compose-html).
 
 ## License
 
-<!-- Mentions under which license you are publishing the project. -->
-<!-- Add the full text to the LICENSE file. -->
+This project is licensed under the [Apache 2.0 license](LICENSE).
 
 ## Contributing
 
