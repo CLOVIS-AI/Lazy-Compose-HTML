@@ -4,6 +4,23 @@ Lazy layouts for [Compose HTML](https://github.com/JetBrains/compose-multiplatfo
 
 ## Usage
 
+Add a dependency on the library:
+```kotlin
+// Configure the project for Kotlin Multiplatform
+// Don't forget to add the Compose plugin
+
+kotlin {
+	js(IR)
+	
+	val jsMain by sourceSets.getting {
+		dependencies {
+			implementation("dev.opensavvy.compose.lazy:lazy-layouts:<version>")
+		}
+	}
+}
+```
+To select a version, see the [list of releases](https://gitlab.com/opensavvy/ui/compose-lazy-html/-/releases).
+
 This library introduces lazy layout implementations that work with Compose HTML:
 ```kotlin
 @Composable
