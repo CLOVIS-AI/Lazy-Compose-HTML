@@ -2,6 +2,26 @@
 
 Lazy layouts for [Compose HTML](https://github.com/JetBrains/compose-multiplatform#compose-html).
 
+## Usage
+
+This library introduces lazy layout implementations that work with Compose HTML:
+```kotlin
+@Composable
+fun ShowUsers(users: List<UserId>) {
+    LazyColumn {
+        items(users) { userId ->
+            var user by remember { mutableStateOf<User?>(null) }
+
+            LaunchedEffect(userId) {
+                user = requestUser(userId)
+            }
+
+            user?.also { Show(it) }
+        }
+    }
+}
+```
+
 ## License
 
 This project is licensed under the [Apache 2.0 license](LICENSE).
