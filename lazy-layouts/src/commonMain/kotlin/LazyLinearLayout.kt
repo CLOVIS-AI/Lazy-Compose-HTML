@@ -7,6 +7,8 @@ import org.jetbrains.compose.web.dom.Div
 import org.w3c.dom.HTMLDivElement
 import kotlin.math.max
 
+const val step = 20
+
 @Composable
 internal fun LazyLinearLayout(
 	dsl: LazyDsl,
@@ -16,13 +18,29 @@ internal fun LazyLinearLayout(
 
 	var nextIndex by remember { mutableStateOf(0) }
 	val items = remember { mutableStateListOf<LazyItem>() }
+	var bufferedItems = remember { listOf<LazyItem>() }
 
 	val visibilityDetector = remember(nextIndex, elements) {
 		{
 			if (nextIndex <= elements.lastIndex) {
 				Snapshot.withMutableSnapshot {
-					items += elements[nextIndex]()
-					nextIndex++
+					if (bufferedItems.size > step) {
+						items += bufferedItems.take(step)
+						bufferedItems = bufferedItems.drop(step)
+					} else if(bufferedItems.isNotEmpty() && bufferedItems.size <= step) {
+						items += bufferedItems
+						bufferedItems = emptyList()
+						nextIndex++
+					} else {
+						val newItems = elements[nextIndex]()
+						if (newItems.size > step) {
+							items += newItems.take(step)
+							bufferedItems = newItems.drop(step)
+						} else {
+							items += newItems
+							nextIndex++
+						}
+					}
 				}
 			}
 		}
