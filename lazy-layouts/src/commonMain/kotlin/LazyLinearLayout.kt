@@ -7,7 +7,7 @@ import org.jetbrains.compose.web.dom.Div
 import org.w3c.dom.HTMLDivElement
 import kotlin.math.max
 
-const val step = 20
+private const val step = 20
 
 @Composable
 internal fun LazyLinearLayout(
