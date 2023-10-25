@@ -18,7 +18,7 @@ internal fun LazyLinearLayout(
 
 	var nextLoaderIndex by remember { mutableStateOf(0) }
 	val items = remember { mutableStateListOf<LazyItem>() }
-	var bufferedItems = remember { listOf<LazyItem>() }
+	var bufferedItems = listOf<LazyItem>()
 
 	val visibilityDetector = remember(nextLoaderIndex, elementsLoaders) {
 		{
