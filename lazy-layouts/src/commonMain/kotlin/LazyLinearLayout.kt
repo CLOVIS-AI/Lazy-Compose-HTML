@@ -14,15 +14,15 @@ internal fun LazyLinearLayout(
 	dsl: LazyDsl,
 	attrs: AttrBuilderContext<HTMLDivElement>? = null,
 ) {
-	val elements = dsl.elements
+	val elementsLoaders = dsl.elements
 
-	var nextIndex by remember { mutableStateOf(0) }
+	var nextLoaderIndex by remember { mutableStateOf(0) }
 	val items = remember { mutableStateListOf<LazyItem>() }
 	var bufferedItems = remember { listOf<LazyItem>() }
 
-	val visibilityDetector = remember(nextIndex, elements) {
+	val visibilityDetector = remember(nextLoaderIndex, elementsLoaders) {
 		{
-			if (nextIndex <= elements.lastIndex) {
+			if (nextLoaderIndex <= elementsLoaders.lastIndex) {
 				Snapshot.withMutableSnapshot {
 					if (bufferedItems.size > step) {
 						items += bufferedItems.take(step)
@@ -30,15 +30,15 @@ internal fun LazyLinearLayout(
 					} else if(bufferedItems.isNotEmpty() && bufferedItems.size <= step) {
 						items += bufferedItems
 						bufferedItems = emptyList()
-						nextIndex++
+						nextLoaderIndex++
 					} else {
-						val newItems = elements[nextIndex]()
+						val newItems = elementsLoaders[nextLoaderIndex]()
 						if (newItems.size > step) {
 							items += newItems.take(step)
 							bufferedItems = newItems.drop(step)
 						} else {
 							items += newItems
-							nextIndex++
+							nextLoaderIndex++
 						}
 					}
 				}
