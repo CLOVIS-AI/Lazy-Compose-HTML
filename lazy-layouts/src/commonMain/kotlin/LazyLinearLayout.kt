@@ -15,31 +15,19 @@ internal fun LazyLinearLayout(
 	attrs: AttrBuilderContext<HTMLDivElement>? = null,
 ) {
 	val elementsLoaders = dsl.elements
-
+	var cursor by remember { mutableStateOf(Cursor()) }
 	var nextLoaderIndex by remember { mutableStateOf(0) }
-	val items = remember { mutableStateListOf<LazyItem>() }
-	var bufferedItems = listOf<LazyItem>()
 
-	val visibilityDetector = remember(nextLoaderIndex, elementsLoaders) {
+	val visibilityDetector = remember(cursor) {
 		{
-			if (nextLoaderIndex <= elementsLoaders.lastIndex) {
-				Snapshot.withMutableSnapshot {
-					if (bufferedItems.size > step) {
-						items += bufferedItems.take(step)
-						bufferedItems = bufferedItems.drop(step)
-					} else if(bufferedItems.isNotEmpty() && bufferedItems.size <= step) {
-						items += bufferedItems
-						bufferedItems = emptyList()
-						nextLoaderIndex++
-					} else {
+			Snapshot.withMutableSnapshot {
+				// Only move end when there are still elements to be displayed
+				if (nextLoaderIndex < elementsLoaders.size || !cursor.isCursorAtEnd()) {
+					cursor = cursor.moveEnd(step)
+					if (cursor.isCursorAtEnd() && nextLoaderIndex < elementsLoaders.size) {
 						val newItems = elementsLoaders[nextLoaderIndex]()
-						if (newItems.size > step) {
-							items += newItems.take(step)
-							bufferedItems = newItems.drop(step)
-						} else {
-							items += newItems
-							nextLoaderIndex++
-						}
+						cursor = cursor.addItems(newItems)
+						nextLoaderIndex++
 					}
 				}
 			}
@@ -47,10 +35,11 @@ internal fun LazyLinearLayout(
 	}
 
 	Div(attrs) {
-		if (items.isEmpty()) {
+		if (cursor.isEmpty()) {
 			VisibilityDetector(visibilityDetector)
 		}
 
+		val items = cursor.getCurrentItems()
 		for ((i, item) in items.withIndex()) {
 			Div {
 				// Add the visibility detector as part of an element to avoid duplicate margins
