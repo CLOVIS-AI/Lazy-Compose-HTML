@@ -14,13 +14,14 @@ plugins {
 	// Some plugins *must* be configured on the root project.
 	// In these cases, we explicitly tell Gradle not to apply them.
 	alias(playgroundLibs.plugins.kotlin) apply false
+	alias(libs.plugins.compose) apply false
 
 	alias(playgroundLibs.plugins.dokkatoo)
 }
 
 dependencies {
 	// List the 'library' projects
-	dokkatoo(projects.core)
+	dokkatoo(projects.lazyLayouts)
 
 	// This is required at the moment, see https://github.com/adamko-dev/dokkatoo/issues/14
 	dokkatooPluginHtml(
