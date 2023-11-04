@@ -1,7 +1,6 @@
 package opensavvy.compose.lazy
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import org.jetbrains.compose.web.css.DisplayStyle
 import org.jetbrains.compose.web.css.FlexDirection
 import org.jetbrains.compose.web.css.display
@@ -43,9 +42,7 @@ fun LazyColumn(
 	attrs: AttrBuilderContext<HTMLDivElement>? = null,
 	block: LazyDsl.() -> Unit,
 ) {
-	val dsl = remember(block) { LazyDsl().also(block) }
-
-	LazyLinearLayout(dsl) {
+	LazyLinearLayout(block) {
 		style {
 			display(DisplayStyle.Flex)
 			flexDirection(FlexDirection.Column)
@@ -68,9 +65,7 @@ fun LazyRow(
 	attrs: AttrBuilderContext<HTMLDivElement>? = null,
 	block: LazyDsl.() -> Unit,
 ) {
-	val dsl = remember(block) { LazyDsl().also(block) }
-
-	LazyLinearLayout(dsl) {
+	LazyLinearLayout(block) {
 		style {
 			display(DisplayStyle.Flex)
 			flexDirection(FlexDirection.Row)
