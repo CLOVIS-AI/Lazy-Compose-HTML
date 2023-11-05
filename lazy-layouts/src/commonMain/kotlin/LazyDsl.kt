@@ -8,8 +8,8 @@ import androidx.compose.runtime.key as composeKey
  *
  * Items will be loaded in the same order as functions are called on this object.
  */
-class LazyDsl {
-	internal val elements = ArrayList<LazyItemsGenerator>()
+class LazyDsl internal constructor() {
+	internal val sections = ArrayList<Section>()
 
 	/**
 	 * Adds [block] as an item of this lazy container.
@@ -21,9 +21,12 @@ class LazyDsl {
 		key: Any? = null,
 		block: @Composable () -> Unit,
 	) {
-		elements += {
-			listOf(LazyItem(key) { block() })
-		}
+		sections.add(Section(Pair(key, block)) {
+			if (it == 0)
+				LoadedItem(key, block)
+			else
+				null
+		})
 	}
 
 	/**
@@ -39,11 +42,12 @@ class LazyDsl {
 		key: (index: Int) -> Any,
 		block: @Composable (index: Int) -> Unit,
 	) {
-		elements += {
-			List(count) {
-				LazyItem(key(it)) { block(it) }
-			}
-		}
+		sections.add(Section(Triple(count, key, block)) {
+			if (it in 0..<count)
+				LoadedItem(key(it)) { block(it) }
+			else
+				null // we're outside the requested range, give up
+		})
 	}
 
 	/**
@@ -60,10 +64,14 @@ class LazyDsl {
 		key: (item: K) -> Any = { it },
 		block: @Composable (item: K) -> Unit,
 	) {
-		elements += {
-			items.map {
-				LazyItem(key(it)) { block(it) }
+		val data = items.toList()
+		sections.add(Section(Triple(data, key, block)) {
+			if (it in data.indices) {
+				val value = data[it]
+				LoadedItem(key(value)) { block(value) }
+			} else {
+				null
 			}
-		}
+		})
 	}
 }
