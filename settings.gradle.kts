@@ -7,7 +7,7 @@
  * in the user manual at https://docs.gradle.org/8.1.1/userguide/multi_project_builds.html
  */
 
-rootProject.name = "Playground"
+rootProject.name = "Lazy-Compose-HTML"
 
 pluginManagement {
 	repositories {
@@ -22,10 +22,11 @@ pluginManagement {
 }
 
 plugins {
-	id("dev.opensavvy.conventions.settings") version "0.2.2"
+	id("dev.opensavvy.conventions.settings") version "0.3.0"
 }
 
 include(
-	"app",
-	"core",
+	"lazy-layouts",
+
+	"demo",
 )

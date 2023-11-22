@@ -1,15 +1,47 @@
-# Playground: Gradle
+# Lazy layouts for Compose HTML
 
-<!-- When using the Playground to bootstrap a project, replace this by your project description. -->
-This a template to easily bootstrap your projects.
+Lazy layouts for [Compose HTML](https://github.com/JetBrains/compose-multiplatform#compose-html).
 
-> This project is part of the OpenSavvy Playground.
-> To learn more, visit [this page](docs/playground/README.md).
+## Usage
+
+Add a dependency on the library:
+```kotlin
+// Configure the project for Kotlin Multiplatform
+// Don't forget to add the Compose plugin
+
+kotlin {
+	js(IR)
+	
+	val jsMain by sourceSets.getting {
+		dependencies {
+			implementation("dev.opensavvy.compose.lazy:lazy-layouts:<version>")
+		}
+	}
+}
+```
+To select a version, see the [list of releases](https://gitlab.com/opensavvy/ui/compose-lazy-html/-/releases).
+
+This library introduces lazy layout implementations that work with Compose HTML:
+```kotlin
+@Composable
+fun ShowUsers(users: List<UserId>) {
+    LazyColumn {
+        items(users) { userId ->
+            var user by remember { mutableStateOf<User?>(null) }
+
+            LaunchedEffect(userId) {
+                user = requestUser(userId)
+            }
+
+            user?.also { Show(it) }
+        }
+    }
+}
+```
 
 ## License
 
-<!-- Mentions under which license you are publishing the project. -->
-<!-- Add the full text to the LICENSE file. -->
+This project is licensed under the [Apache 2.0 license](LICENSE).
 
 ## Contributing
 
