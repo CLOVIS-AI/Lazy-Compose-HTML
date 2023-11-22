@@ -1,8 +1,6 @@
 plugins {
-	id("conventions.base")
-	id("conventions.kotlin")
-
-	alias(libs.plugins.compose)
+	alias(opensavvyConventions.plugins.kotlin.application)
+	alias(opensavvyConventions.plugins.aligned.composeMultiplatform)
 }
 
 kotlin {

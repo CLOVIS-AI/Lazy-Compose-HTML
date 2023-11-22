@@ -1,13 +1,9 @@
 # List of dependencies of the project
-# Dependencies shared between all projects based on the Playground are declared in playground.versions.toml
 
 [versions]
-compose = "1.5.2"
-
 kotlin-browser = "1.0.0-pre.631"
 
 [plugins]
-compose = { id = "org.jetbrains.compose", version.ref = "compose" }
 
 [libraries]
 kotlin-browser = { module = "org.jetbrains.kotlin-wrappers:kotlin-browser", version.ref = "kotlin-browser" }
