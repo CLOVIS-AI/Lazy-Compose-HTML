@@ -1,9 +1,11 @@
 # List of dependencies of the project
 
 [versions]
+kotlin-browser = "1.0.0-pre.631"
 
 [plugins]
 
 [libraries]
+kotlin-browser = { module = "org.jetbrains.kotlin-wrappers:kotlin-browser", version.ref = "kotlin-browser" }
 
 [bundles]
