@@ -151,7 +151,8 @@ demo:build:
 
 publish-maven:gitlab:
   extends: [ .kotlin-jvm ]
-  needs: [ os.version ]
+  needs:
+    - os.version
   stage: deploy
 
   script:
@@ -169,6 +170,8 @@ publish-maven:gitlab:
 
 publish-maven:gitlab[ios]:
   extends: [ .kotlin-native-iosArm64 ]
+  needs:
+    - os.version
   stage: deploy
 
   script:
@@ -189,7 +192,8 @@ publish-maven:gitlab[ios]:
 
 publish-maven:central:initialize:
   extends: [ .kotlin-jvm ]
-  needs: [ os.version ]
+  needs:
+    - os.version
   stage: deploy
 
   script:
@@ -208,7 +212,9 @@ publish-maven:central:initialize:
 
 publish-maven:central:
   extends: [ .kotlin-jvm ]
-  needs: [ os.version, publish-maven:central:initialize ]
+  needs:
+    - os.version
+    - publish-maven:central:initialize
   stage: deploy
 
   script:
@@ -230,7 +236,9 @@ publish-maven:central:
 
 publish-maven:central[ios]:
   extends: [ .kotlin-native-iosArm64 ]
-  needs: [ os.version, publish-maven:central:initialize ]
+  needs:
+    - os.version
+    - publish-maven:central:initialize
   stage: deploy
 
   script:
@@ -252,7 +260,10 @@ publish-maven:central[ios]:
 
 publish-maven:central:release:
   extends: [ .kotlin-jvm ]
-  needs: [ os.version, publish-maven:central ]
+  needs:
+    - os.version
+    - publish-maven:central
+    - publish-maven:central[ios]
   stage: deploy
 
   script:
