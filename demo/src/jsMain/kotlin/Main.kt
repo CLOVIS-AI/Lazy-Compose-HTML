@@ -17,7 +17,9 @@ fun main() {
 	renderComposable(rootElementId = "root") {
 		val randomElements = remember { mutableStateListOf<UInt>() }
 
-		LazyColumn {
+		LazyColumn ({
+			classes("lazy")
+		}) {
 			item {
 				Text("First element")
 			}

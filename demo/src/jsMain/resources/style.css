@@ -1,0 +1,38 @@
+:root {
+	--primary-100: #e0f2fe;
+	--primary-200: #f5fbfe;
+	--primary-500: #4766ff;
+}
+
+.lazy {
+	border-radius: 1rem;
+	font-family: sans-serif;
+	gap: 0.5rem;
+}
+
+div {
+	padding: 1rem;
+	border-radius: 0.5rem;
+}
+
+button {
+	background-color: var(--primary-500);
+	padding: 1rem;
+	color: white;
+	border-radius: 1rem;
+	border: none;
+	transition: box-shadow .08s linear, min-width .15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+button:hover {
+	cursor: pointer;
+	box-shadow: 0 1px 3px 0 rgba(60, 64, 67, 0.302), 0 4px 8px 3px rgba(60, 64, 67, 0.149);
+	transition: box-shadow .08s linear, min-width .15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.lazy div:first-child {
+	background-color: var(--primary-100);
+}
+
+.lazy div:nth-child(odd):not(:first-child) {
+	background-color: var(--primary-200);
+}
