@@ -20,7 +20,7 @@ internal fun LazyLinearLayout(
 	}
 
 	val loaders = sections.map {
-		remember(it.dependencies) {
+		remember(it.identity) {
 			SectionLoader(it)
 		}
 	}

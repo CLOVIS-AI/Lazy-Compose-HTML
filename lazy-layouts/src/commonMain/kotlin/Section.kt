@@ -13,13 +13,13 @@ internal data class Section(
 	/**
 	 * An object that represents the identity of this section.
 	 */
-	val dependencies: Any,
+	val identity: Any,
 	/**
 	 * Loads an item from this section at a given index.
 	 *
 	 * This lambda returns `null` when the index is out of range for this section.
 	 */
-	val loader: (index: Int) -> LoadedItem?,
+	val loadAt: (index: Int) -> LoadedItem?,
 )
 
 /**
@@ -39,7 +39,7 @@ internal data class SectionLoader(private val section: Section) {
 	fun loadMoreAtEnd() = Snapshot.withMutableSnapshot {
 		repeat(step) {
 			val last = loadedMax
-			val datum = section.loader(last + 1)
+			val datum = section.loadAt(last + 1)
 
 			if (datum != null) {
 				// We just loaded an item
