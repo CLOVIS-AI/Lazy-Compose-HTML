@@ -28,6 +28,10 @@ fun main() {
 				Text("Element #$it")
 			}
 
+			items(randomElements) {
+				Text("Random value: $it")
+			}
+
 			item {
 				Button({
 					onClick {
@@ -41,10 +45,6 @@ fun main() {
 				}) {
 					Text("Generate random elements")
 				}
-			}
-
-			items(randomElements) {
-				Text("Random value: $it")
 			}
 
 			items(letterIndexes) {
