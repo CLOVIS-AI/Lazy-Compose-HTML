@@ -9,6 +9,7 @@ import org.w3c.dom.HTMLDivElement
 @Composable
 internal fun LazyLinearLayout(
 	dsl: LazyDsl.() -> Unit,
+	itemAttrs: AttrBuilderContext<HTMLDivElement>? = null,
 	attrs: AttrBuilderContext<HTMLDivElement>? = null,
 ) {
 	val sections by remember(dsl) {
@@ -28,7 +29,7 @@ internal fun LazyLinearLayout(
 	Div(attrs) {
 		var visibleEndIndex: Int? = null
 		for ((i, loader) in loaders.withIndex()) {
-			for (item in loader.items) Div {
+			for (item in loader.items) Div(itemAttrs) {
 				key(item.key) {
 					item.block()
 				}
