@@ -27,19 +27,19 @@ internal fun LazyLinearLayout(
 	}
 
 	Div(attrs) {
-		var visibleEndIndex: Int? = null
-		for ((i, loader) in loaders.withIndex()) {
-			for (item in loader.items) key(item.key) {
+		var lastVisibleSection: Int? = null
+		for ((sectionIndex, section) in loaders.withIndex()) {
+			for (item in section.items) key(item.key) {
 				Div(itemAttrs) {
 					item.block()
 				}
 			}
 
-			if (visibleEndIndex == null && !loader.endReached) {
-				visibleEndIndex = i
+			if (lastVisibleSection == null && !section.endReached) {
+				lastVisibleSection = sectionIndex
 				VisibilityDetector {
 					Snapshot.withMutableSnapshot {
-						loader.loadMoreAtEnd()
+						section.loadMoreAtEnd()
 					}
 				}
 			}
