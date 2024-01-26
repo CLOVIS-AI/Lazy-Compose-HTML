@@ -29,8 +29,8 @@ internal fun LazyLinearLayout(
 	Div(attrs) {
 		var visibleEndIndex: Int? = null
 		for ((i, loader) in loaders.withIndex()) {
-			for (item in loader.items) Div(itemAttrs) {
-				key(item.key) {
+			for (item in loader.items) key(item.key) {
+				Div(itemAttrs) {
 					item.block()
 				}
 			}
