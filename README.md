@@ -48,6 +48,10 @@ fun ShowUsers(users: List<UserId>) {
 
 To learn more, see the [documentation](https://opensavvy.gitlab.io/ui/compose-lazy-html/api-docs/index.html).
 
+## Example
+
+A full example project is available [here](demo). The latest version is deployed [here](https://opensavvy.gitlab.io/ui/compose-lazy-html/demo/index.html).
+
 ## License
 
 This project is licensed under the [Apache 2.0 license](LICENSE).
