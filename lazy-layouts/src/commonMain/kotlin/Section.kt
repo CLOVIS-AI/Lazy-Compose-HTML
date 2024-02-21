@@ -18,6 +18,13 @@ internal data class Section(
 	 * Loads an item from this section at a given index.
 	 *
 	 * This lambda returns `null` when the index is out of range for this section.
+	 *
+	 * Sections must be continuous.
+	 * That is, for any `n`, if `n` and `n+2` are in-range, then `n+1` must be in-range too.
+	 *
+	 * Sections must be around 0.
+	 * That is, only an empty section may consider 0 to be out of range.
+	 * Any other section must consider 0 to be in-range, and may extend any distance in each direction.
 	 */
 	val loadAt: (index: Int) -> LoadedItem?,
 )
