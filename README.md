@@ -39,6 +39,19 @@ fun ShowUsers(users: List<UserId>) {
 }
 ```
 
+## Features
+
+- Items are loaded batch by batch when the end of the loaded section is reached.
+- Items can change size.
+- Sections can change over time by editing the backing list, items from other sections are not reloaded.
+- The library only adds the most minimal CSS to make the containing `div` use flex, the style is entirely customizable with plain CSS or through the Compose HTML `attrs` builder.
+
+To learn more, see the [documentation](https://opensavvy.gitlab.io/ui/compose-lazy-html/api-docs/index.html).
+
+## Example
+
+A full example project is available [here](demo). The latest version is deployed [here](https://opensavvy.gitlab.io/ui/compose-lazy-html/demo/index.html).
+
 ## License
 
 This project is licensed under the [Apache 2.0 license](LICENSE).

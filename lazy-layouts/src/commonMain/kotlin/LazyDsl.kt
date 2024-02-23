@@ -34,6 +34,8 @@ class LazyDsl internal constructor() {
 	 *
 	 * Each item is displayed by calling [block] and passing the item index (from `0` inclusive to `count` exclusive).
 	 *
+	 * [count] is allowed to change over time.
+	 *
 	 * @param key A function which generates a locally-unique identifier for an item from its index.
 	 * For more information, see [key][composeKey].
 	 */
@@ -54,6 +56,8 @@ class LazyDsl internal constructor() {
 	 * Adds all the items of [items] to this lazy container.
 	 *
 	 * Each item is displayed by calling [block] and passing the item.
+	 *
+	 * [items] is allowed to change over time, in which case the section will be reloaded.
 	 *
 	 * @param key A function which generates a locally-unique identifier for an item.
 	 * By default, uses the item itself as its own key.
