@@ -9,6 +9,7 @@ import org.w3c.dom.HTMLDivElement
 @Composable
 internal fun LazyLinearLayout(
 	dsl: LazyDsl.() -> Unit,
+	itemAttrs: AttrBuilderContext<HTMLDivElement>? = null,
 	attrs: AttrBuilderContext<HTMLDivElement>? = null,
 ) {
 	val sections by remember(dsl) {
@@ -20,25 +21,25 @@ internal fun LazyLinearLayout(
 	}
 
 	val loaders = sections.map {
-		remember(it.dependencies) {
+		remember(it.identity) {
 			SectionLoader(it)
 		}
 	}
 
 	Div(attrs) {
-		var visibleEndIndex: Int? = null
-		for ((i, loader) in loaders.withIndex()) {
-			for (item in loader.items) Div {
-				key(item.key) {
+		var lastVisibleSection: Int? = null
+		for ((sectionIndex, section) in loaders.withIndex()) {
+			for (item in section.items) key(item.key) {
+				Div(itemAttrs) {
 					item.block()
 				}
 			}
 
-			if (visibleEndIndex == null && !loader.endReached) {
-				visibleEndIndex = i
+			if (lastVisibleSection == null && !section.endReached) {
+				lastVisibleSection = sectionIndex
 				VisibilityDetector {
 					Snapshot.withMutableSnapshot {
-						loader.loadMoreAtEnd()
+						section.loadMoreAtEnd()
 					}
 				}
 			}

@@ -21,12 +21,17 @@ class LazyDsl internal constructor() {
 		key: Any? = null,
 		block: @Composable () -> Unit,
 	) {
-		sections.add(Section(Pair(key, block)) {
-			if (it == 0)
-				LoadedItem(key, block)
-			else
-				null
-		})
+		sections.add(
+			Section(
+				identity = Pair(key, block),
+				loadAt = { index ->
+					if (index == 0)
+						LoadedItem(key, block)
+					else
+						null
+				}
+			)
+		)
 	}
 
 	/**
@@ -44,12 +49,17 @@ class LazyDsl internal constructor() {
 		key: (index: Int) -> Any,
 		block: @Composable (index: Int) -> Unit,
 	) {
-		sections.add(Section(Triple(count, key, block)) {
-			if (it in 0..<count)
-				LoadedItem(key(it)) { block(it) }
-			else
-				null // we're outside the requested range, give up
-		})
+		sections.add(
+			Section(
+				identity = Triple(count, key, block),
+				loadAt = { index ->
+					if (index in 0..<count)
+						LoadedItem(key(index)) { block(index) }
+					else
+						null // we're outside the requested range, give up
+				}
+			)
+		)
 	}
 
 	/**
@@ -69,13 +79,18 @@ class LazyDsl internal constructor() {
 		block: @Composable (item: K) -> Unit,
 	) {
 		val data = items.toList()
-		sections.add(Section(Triple(data, key, block)) {
-			if (it in data.indices) {
-				val value = data[it]
-				LoadedItem(key(value)) { block(value) }
-			} else {
-				null
-			}
-		})
+		sections.add(
+			Section(
+				identity = Triple(data, key, block),
+				loadAt = { index ->
+					if (index in data.indices) {
+						val value = data[index]
+						LoadedItem(key(value)) { block(value) }
+					} else {
+						null
+					}
+				}
+			)
+		)
 	}
 }

@@ -36,13 +36,17 @@ import org.w3c.dom.HTMLDivElement
  *     }
  * }
  * ```
+ *
+ * @param attrs HTML attributes for the list itself.
+ * @param itemAttrs HTML attributes added to each element in the list.
  */
 @Composable
 fun LazyColumn(
 	attrs: AttrBuilderContext<HTMLDivElement>? = null,
+	itemAttrs: AttrBuilderContext<HTMLDivElement>? = null,
 	block: LazyDsl.() -> Unit,
 ) {
-	LazyLinearLayout(block) {
+	LazyLinearLayout(block, itemAttrs) {
 		style {
 			display(DisplayStyle.Flex)
 			flexDirection(FlexDirection.Column)
@@ -59,13 +63,17 @@ fun LazyColumn(
  * Items are only loaded as they appear on screen.
  *
  * Elements are loaded from side to side, respecting the user's reading direction, in the same order as they are declared in [block].
+ *
+ * @param attrs HTML attributes for the list itself.
+ * @param itemAttrs HTML attributes added to each element in the list.
  */
 @Composable
 fun LazyRow(
 	attrs: AttrBuilderContext<HTMLDivElement>? = null,
+	itemAttrs: AttrBuilderContext<HTMLDivElement>? = null,
 	block: LazyDsl.() -> Unit,
 ) {
-	LazyLinearLayout(block) {
+	LazyLinearLayout(block, itemAttrs) {
 		style {
 			display(DisplayStyle.Flex)
 			flexDirection(FlexDirection.Row)
