@@ -46,6 +46,8 @@ fun LazyColumn(
 	itemAttrs: AttrBuilderContext<HTMLDivElement>? = null,
 	block: LazyDsl.() -> Unit,
 ) {
+	debugEvent { "Recomposing LazyColumn" }
+
 	LazyLinearLayout(block, itemAttrs) {
 		style {
 			display(DisplayStyle.Flex)
@@ -73,6 +75,8 @@ fun LazyRow(
 	itemAttrs: AttrBuilderContext<HTMLDivElement>? = null,
 	block: LazyDsl.() -> Unit,
 ) {
+	debugEvent { "Recomposing LazyRow" }
+
 	LazyLinearLayout(block, itemAttrs) {
 		style {
 			display(DisplayStyle.Flex)
