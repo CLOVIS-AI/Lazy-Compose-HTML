@@ -1,7 +1,9 @@
 package opensavvy.compose.lazy
 
 import androidx.compose.runtime.*
+import org.jetbrains.compose.web.css.Color
 import org.jetbrains.compose.web.dom.Div
+import org.jetbrains.compose.web.dom.Text
 import web.dom.document
 import web.dom.observers.IntersectionObserver
 import kotlin.random.Random
@@ -35,6 +37,10 @@ internal fun VisibilityDetector(onVisible: () -> Unit) {
 		onDispose {
 			observer.disconnect()
 		}
+	}
+
+	DebugOnly(color = Color.yellow) {
+		Text("Visibility detector (has been hit $hit times)")
 	}
 
 	Div({
