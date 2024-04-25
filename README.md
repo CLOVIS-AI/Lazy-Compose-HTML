@@ -10,7 +10,9 @@ Add a dependency on the library:
 // Don't forget to add the Compose plugin
 
 kotlin {
-	js(IR)
+	js(IR) {
+		browser()
+	}
 	
 	sourceSets.jsMain.dependencies {
 		implementation("dev.opensavvy.compose.lazy:lazy-layouts:<version>")
