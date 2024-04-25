@@ -12,10 +12,8 @@ Add a dependency on the library:
 kotlin {
 	js(IR)
 	
-	val jsMain by sourceSets.getting {
-		dependencies {
-			implementation("dev.opensavvy.compose.lazy:lazy-layouts:<version>")
-		}
+	sourceSets.jsMain.dependencies {
+		implementation("dev.opensavvy.compose.lazy:lazy-layouts:<version>")
 	}
 }
 ```
