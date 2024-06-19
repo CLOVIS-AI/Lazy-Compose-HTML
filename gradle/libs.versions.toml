@@ -1,7 +1,7 @@
 # List of dependencies of the project
 
 [versions]
-kotlin-browser = "1.0.0-pre.631"
+kotlin-browser = "1.0.0-pre.758"      # https://github.com/JetBrains/kotlin-wrappers?tab=readme-ov-file#kotlin-wrappers
 
 [plugins]
 

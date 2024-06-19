@@ -2,6 +2,7 @@ plugins {
 	alias(opensavvyConventions.plugins.base)
 	alias(opensavvyConventions.plugins.kotlin.application)
 	alias(opensavvyConventions.plugins.aligned.composeMultiplatform)
+	alias(opensavvyConventions.plugins.aligned.composeCompiler)
 }
 
 kotlin {
