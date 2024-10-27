@@ -3,6 +3,8 @@
 Compose HTML implementation of LazyRow and LazyColumn.
 
 <a href="https://search.maven.org/search?q=dev.opensavvy.compose.lazy"><img src="https://img.shields.io/maven-central/v/dev.opensavvy.compose.lazy/lazy-layouts.svg?label=Maven%20Central"></a>
+<a href="https://opensavvy.dev/open-source/stability.html"><img src="https://badgen.net/static/Stability/alpha/purple"></a>
+<a href="https://javadoc.io/doc/dev.opensavvy.compose.lazy/lazy-layouts"><img src="https://badgen.net/static/Other%20versions/javadoc.io/blue"></a>
 
 ## Introduction
 
