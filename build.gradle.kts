@@ -22,7 +22,7 @@ plugins {
 
 dependencies {
 	// List the 'library' projects
-	dokkatoo(projects.lazyLayouts)
+	dokka(projects.lazyLayouts)
 }
 
 // region Check the users of the project didn't forget to rename the group
