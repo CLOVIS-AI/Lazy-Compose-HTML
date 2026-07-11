@@ -1,6 +1,9 @@
 package opensavvy.playground.core
 
+import org.intellij.lang.annotations.Language
+
 /**
  * A hello world message.
  */
-const val message = "Hello World!"
+@Language("text")
+const val message: String = "Hello World!"
