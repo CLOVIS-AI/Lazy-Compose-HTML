@@ -112,6 +112,7 @@ gitlabCi {
 			gradlew.tasks(
 				":demo:jsBrowserProductionWebpack",
 				$$"-PappVersion=$project_version",
+				"--info",
 			)
 		}
 
