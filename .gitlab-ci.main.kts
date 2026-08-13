@@ -110,19 +110,20 @@ gitlabCi {
 
 		script {
 			gradlew.tasks(
-				":demo:jsBrowserProductionWebpack",
+				":demo:jsBrowserDistribution",
 				$$"-PappVersion=$project_version",
 				"--info",
 			)
 		}
 
 		afterScript {
-			shell("mv demo/build/dist/js/developmentExecutable/* demo")
-			shell("""echo "URL=$(.gitlab/ci/review-url.sh demo/index.html)">>demo.env""")
+			shell("mkdir -p demo-output")
+			shell("mv demo/build/dist/js/productionExecutable/* demo-output")
+			shell("""echo "URL=$(.gitlab/ci/review-url.sh demo-output/index.html)">>demo.env""")
 		}
 
 		artifacts {
-			include("website")
+			include("demo-output")
 			dotenv("demo.env")
 		}
 
