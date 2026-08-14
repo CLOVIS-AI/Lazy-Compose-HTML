@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block htmltitle %}
+	{% if page.toc | first is defined %}
+		<title>{{ page.toc.items[0].title }} - {{ config.site_name }}</title>
+	{% else %}
+		{{ super() }}
+	{% endif %}
+{% endblock %}
+
+{% block announce %}
+	<b>Do you like our projects?</b>    Support us by <a href="https://github.com/clovis-ai">following Ivan on GitHub!</a>
+{% endblock %}

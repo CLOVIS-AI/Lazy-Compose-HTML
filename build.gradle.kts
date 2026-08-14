@@ -55,3 +55,25 @@ plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.j
 }
 
 // endregion
+// region Configure Dokka overrides
+
+dokka {
+	pluginsConfiguration.html {
+		templatesDir.set(file("docs/dokka/overrides"))
+	}
+}
+
+// endregion
+// region NodeJS version
+
+allprojects {
+	plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin> {
+		the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec>().version.set(libsCommon.versions.nodejs)
+	}
+
+	plugins.withType<org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin> {
+		the<org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsEnvSpec>().version.set(libsCommon.versions.nodejs)
+	}
+}
+
+// endregion

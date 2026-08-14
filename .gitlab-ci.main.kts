@@ -1,21 +1,322 @@
 #!/usr/bin/env kotlin
 
-// https://gitlab.com/opensavvy/automation/gitlab-ci.kt/-/releases
-@file:DependsOn("dev.opensavvy.gitlab:gitlab-ci-kotlin-jvm:0.5.0")
+// https://gitlab-ci-kts.opensavvy.dev/news/index.html
+@file:DependsOn("dev.opensavvy.gitlab:gitlab-ci-kotlin-jvm:0.7.5")
 
-import opensavvy.gitlab.ci.gitlabCi
-import opensavvy.gitlab.ci.job
+import opensavvy.gitlab.ci.*
+import opensavvy.gitlab.ci.Environment.EnvironmentTier.Development
+import opensavvy.gitlab.ci.plugins.Gradle.Companion.gradlew
+import opensavvy.gitlab.ci.plugins.Gradle.Companion.useGradle
 import opensavvy.gitlab.ci.script.shell
-import opensavvy.gitlab.ci.stage
+
+/**
+ * [OpenSavvy's CI container images](https://gitlab.com/opensavvy/automation/containers/-/releases)
+ */
+val ciContainers = "0.8.7"
+
+/**
+ * The URL of the website built by /docs/website.
+ */
+val siteUrl = "\$CI_PAGES_URL"
+
+// ***
+
+fun Job.opensavvyImage(name: String) =
+	image("registry.gitlab.com/opensavvy/automation/containers/$name", ciContainers)
+
+// region GitLab
+
+/**
+ * Renames all JUnit XML test reports to remove non-latin-1 characters, because GitLab crashes in their presence.
+ *
+ * See [GITLAB-580885](https://gitlab.com/gitlab-org/gitlab/-/issues/580885).
+ */
+fun Job.stripUnicodeTestReports() {
+	afterScript {
+		// language="Shell Script"
+		shell($$"""
+			find . -path '*/build/test-results/*/TEST-*.xml' -print0 |
+			  perl -C -0ne 'print if /[^\x00-\xFF]/' |
+			  while IFS= read -r -d '' f; do
+			    d="$(dirname "$f")"
+			    b="$(basename "$f")"
+			    nb=$(printf '%s' "$b" | perl -C -pe 's/[\x{80}-\x{FFFF}]/-/g')
+			    mv -- "$f" "$d/$nb"
+			  done
+		""".trimIndent())
+		shell("find . -path '*/build/test-results/*/TEST-*.xml'")
+	}
+}
+
+// endregion
+// region Kotlin Multiplatform
+
+fun Job.jvm() {
+	useGradle()
+	opensavvyImage("java")
+}
+
+fun Job.jsBrowser() {
+	useGradle()
+	opensavvyImage("chromium")
+
+	stripUnicodeTestReports()
+}
+
+fun Job.jsNode() {
+	useGradle()
+	opensavvyImage("nodejs")
+
+	stripUnicodeTestReports()
+}
+
+fun Job.nativeLinuxX64() {
+	useGradle()
+	opensavvyImage("java")
+
+	stripUnicodeTestReports()
+}
+
+fun Job.nativeIosArm64() {
+	useGradle()
+	image("macos-26-xcode-26")
+
+	beforeScript {
+		shell("xcodebuild -downloadPlatform iOS")
+		shell("xcodebuild -downloadPlatform watchOS")
+	}
+
+	tag("saas-macos-medium-m1")
+
+	retry(1) {
+		onExitCode(1)
+		on(RetryCause.ScriptFailure)
+	}
+
+	stripUnicodeTestReports()
+}
+
+// endregion
 
 gitlabCi {
+	val build by stage()
 	val test by stage()
+	val deploy by stage()
 
-	val helloWorld by job(stage = test) {
+	// region Demo
+
+	val demo by job(stage = build) {
+		jsNode()
+
 		script {
-			shell("echo 'Hello world'")
+			gradlew.tasks(
+				":demo:jsBrowserDistribution",
+				$$"-PappVersion=$project_version",
+				"--info",
+			)
+		}
+
+		afterScript {
+			shell("mkdir -p demo-output")
+			shell("mv demo/build/dist/js/productionExecutable/* demo-output")
+			shell("""echo "URL=$(.gitlab/ci/review-url.sh demo-output/index.html)">>demo.env""")
+		}
+
+		artifacts {
+			include("demo-output")
+			dotenv("demo.env")
+		}
+
+		environment {
+			name($$"review/$CI_COMMIT_REF_SLUG/demo")
+			url($$"$URL")
+			tier(Development)
+		}
+
+		interruptible(true)
+
+	}
+
+	// endregion
+	// region Tests
+
+	val checkJvm by job(stage = test) {
+		jvm()
+
+		script {
+			gradlew.tasks(
+				"check :koverLog :koverHtmlReport koverVerify --rerun",
+				"-x jsBrowserTest",
+				"-x jsNodeTest",
+				"-x wasmJsBrowserTest",
+				"-x wasmJsNodeTest",
+				"-x wasmWasiNodeTest",
+				"-x linuxX64Test",
+				"-x mingwX64Test",
+				"-x macosArm64Test",
+				"-x iosSimulatorArm64Test",
+				$$"-PappVersion=$project_version",
+			)
+		}
+
+		afterScript {
+			shell("mkdir -p jvm-cover-report")
+			shell("mv build/reports/kover/html/* jvm-cover-report")
+		}
+
+		artifacts {
+			include("jvm-cover-report")
+			exposeAs("JVM code coverage")
+		}
+
+		interruptible(true)
+	}
+
+	val checkJsBrowser by job(stage = test) {
+		jsBrowser()
+
+		script {
+			gradlew.tasks(
+				"jsBrowserTest wasmJsBrowserTest",
+				$$"-PappVersion=$project_version",
+			)
+		}
+
+		interruptible(true)
+	}
+
+	val checkJsNode by job(stage = test) {
+		jsNode()
+
+		script {
+			gradlew.tasks(
+				"jsNodeTest wasmJsNodeTest wasmWasiNodeTest",
+				$$"-PappVersion=$project_version",
+			)
+		}
+
+		interruptible(true)
+	}
+
+	val checkLinuxX64 by job(stage = test) {
+		nativeLinuxX64()
+
+		script {
+			gradlew.tasks(
+				"linuxX64Test mingwX64Test",
+				$$"-PappVersion=$project_version",
+			)
+		}
+
+		interruptible(true)
+	}
+
+	val checkIosArm64 by job(stage = test) {
+		nativeIosArm64()
+
+		script {
+			gradlew.tasks(
+				"iosSimulatorArm64Test macosArm64Test tvosSimulatorArm64Test watchosSimulatorArm64Test",
+				$$"-PappVersion=$project_version",
+			)
+		}
+
+		interruptible(true)
+	}
+
+	// endregion
+	// region Documentation
+
+	val mkdocs by job(stage = build) {
+		opensavvyImage("mkdocs")
+		variable("GIT_DEPTH", "0")
+
+		beforeScript {
+			shell("./docs/website/verify-marker.sh")
+			shell($$"./gradlew docs:website:embedDokkaIntoMkDocs -PappVersion=$project_version")
+			shell("cd docs/website")
+			shell("ls")
+			shell($$"""echo "repo_url: $CI_PROJECT_URL">>mkdocs.yml""")
+			shell($$"""echo "repo_name: $CI_PROJECT_TITLE">>mkdocs.yml""")
+			shell($$"""echo "site_url: $$siteUrl">>mkdocs.yml""")
+		}
+
+		script {
+			shell("./generate-news.sh")
+			shell("mkdocs build --site-dir ../../docs-website")
+		}
+
+		afterScript {
+			shell("""echo "URL=$(.gitlab/ci/review-url.sh docs-website/index.html)">>docs.env""")
+		}
+
+		artifacts {
+			include("docs-website")
+			dotenv("docs.env")
+		}
+
+		environment {
+			name("review/${Variable.Commit.Ref.slug}/docs")
+			url($$"$URL")
+			tier(Development)
+		}
+
+		interruptible(true)
+	}
+
+	val dokka by job(stage = build) {
+		jvm()
+
+		script {
+			gradlew.tasks(
+				":dokkaGeneratePublicationHtml",
+				$$"-PappVersion=$project_version"
+			)
+		}
+
+		afterScript {
+			shell("mkdir -p api-docs")
+			shell("mv build/dokka/html/* api-docs")
+			shell("""echo "URL=$(.gitlab/ci/review-url.sh api-docs/index.html)">>dokka.env""")
+		}
+
+		artifacts {
+			include("api-docs")
+			dotenv("dokka.env")
+		}
+
+		environment {
+			name("review/${Variable.Commit.Ref.slug}/api-docs")
+			url($$"$URL")
+			tier(Development)
+		}
+
+		interruptible(true)
+	}
+
+	if (Value.isTag) {
+		job("pages", stage = deploy) {
+			image("alpine", "latest")
+			dependsOn(mkdocs, artifacts = true)
+			dependsOn(dokka, artifacts = true)
+			dependsOn(demo, artifacts = true)
+
+			script {
+				shell("mkdir -p public")
+				shell("mv -T docs-website public")
+				shell("mv api-docs public")
+				shell("mv demo public")
+			}
+
+			artifacts {
+				include("public")
+			}
+
+			interruptible(false)
 		}
 	}
+
+	// endregion
 }.println()
 
 println("""
