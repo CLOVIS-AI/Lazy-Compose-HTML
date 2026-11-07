@@ -21,7 +21,6 @@ plugins {
 	alias(libsCommon.plugins.ksp) apply false
 	alias(libsCommon.plugins.kotlinx.serialization) apply false
 	alias(libsCommon.plugins.kotlinx.powerAssert) apply false
-	alias(libsCommon.plugins.compose.multiplatform) apply false
 }
 
 dependencies {
