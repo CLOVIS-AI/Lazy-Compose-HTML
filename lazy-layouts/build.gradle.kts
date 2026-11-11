@@ -1,22 +1,19 @@
 plugins {
 	alias(opensavvyConventions.plugins.base)
 	alias(opensavvyConventions.plugins.kotlin.library)
-	alias(libsCommon.plugins.compose.multiplatform)
 	alias(libsCommon.plugins.compose.compiler)
 }
 
 kotlin {
-	js(IR) {
+	js {
 		browser()
 	}
 
-	val jsMain by sourceSets.getting {
-		dependencies {
-			api(compose.runtime)
-			api(compose.html.core)
+	sourceSets.jsMain.dependencies {
+		api(libs.compose.runtime)
+		api(libs.compose.html)
 
-			implementation(libs.kotlin.browser)
-		}
+		implementation(libs.kotlin.browser)
 	}
 }
 
